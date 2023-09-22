@@ -20,7 +20,7 @@ def download_model(file_id, dest_folder):
     st.write("Model downloaded and extracted!")
 
 # Set up the model paths
-MODEL_PATH = "./model"
+MODEL_PATH = "./lawllm"
 DEST_FOLDER = "."
 
 # Load the model and tokenizer
