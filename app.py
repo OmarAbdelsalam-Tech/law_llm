@@ -4,11 +4,7 @@ import requests
 from transformers import AutoModelForCausalLM, AutoTokenizer, AutoConfig
 from transformers import dynamic_module_utils
 
-# Patch the function to always return False
-def patched_resolve_trust_remote_code(*args, **kwargs):
-    return False
 
-dynamic_module_utils.resolve_trust_remote_code = patched_resolve_trust_remote_code
 
 # Download the file from Google Drive
 def download_file_from_google_drive(file_id, destination):
