@@ -1,6 +1,9 @@
 import streamlit as st
 import os
 import requests
+
+import platform
+
 from transformers import AutoModelForCausalLM, AutoTokenizer
 
 # Check if 'model_loaded' is in the session state
@@ -55,3 +58,5 @@ if user_input and st.session_state.model_loaded:
     
     # Display the model's answer
     st.write("Answer:", answer)
+st.write("Python version:", platform.python_version())
+
