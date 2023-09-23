@@ -14,7 +14,7 @@ def download_file_from_google_drive(file_id, destination):
             file.write(chunk)
 
 # Adjusted the model path to the current directory
-MODEL_PATH = "/mount/src/law_llm"
+MODEL_PATH = "./"
 
 @st.cache(allow_output_mutation=True, suppress_st_warning=True)
 def load_model():
