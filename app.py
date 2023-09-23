@@ -1,75 +1,62 @@
 import streamlit as st
-import os
-import requests
-from transformers import AutoModelForCausalLM, AutoTokenizer, AutoConfig
-from unittest.mock import patch
+import openai
+
+openai.api_key = st.secrets["openai"]["api_key"]
 
 
-
-
-# Download the file from Google Drive
-def download_file_from_google_drive(file_id, destination):
-    base_url = "https://drive.google.com/uc?export=download"
-    response = requests.get(f"{base_url}&id={file_id}", stream=True)
-    
-    with open(destination, "wb") as file:
-        for chunk in response.iter_content(chunk_size=32768):
-            file.write(chunk)
-
-# Adjusted the model path to the current directory
-MODEL_PATH = "/mount/src/law_llm/"
-
-@st.cache(allow_output_mutation=True, suppress_st_warning=True)
-def load_model():
-    # File IDs and their names
-    file_ids = {
-        "1vltJDB2dWuHz_oaNui-kqFzG14nRaNaL": "vocab.json",
-        "131QwCzR1siIQSV2ugF1n2g737FVUCKAr": "tokenizer.json",
-        "1VkfMF0XOEFNs9bmJaW7VT9pUlhwJjEUW": "tokenizer_config.json",
-        "1iaJ7bkD1ln3AB4OzYSrP1hLl7wE2FwET": "special_tokens_map.json",
-        "1Wdv0J1zAx20e2uzs6E3Ph9g8nA_Jf8Wk": "pytorch_model.bin",
-        "1wIltr1eGTQhmpNf9OU4lp-OCIqINbGFx": "merges.txt",
-        "1g_6W4K_llIXmty0mhQcLc7PoINgGlhau": "generation_config.json",
-        "1qcqD5YRpTRt60iHaJCfSEqOR-xGdNEPu": "config.json"
-    }
-
-    # Check if all files exist
-    all_files_exist = all(os.path.exists(os.path.join(MODEL_PATH, fname)) for fname in file_ids.values())
-    if not all_files_exist:
-        # Download each file
-        st.write("Downloading model files...")
-        for file_id, fname in file_ids.items():
-            download_file_from_google_drive(file_id, os.path.join(MODEL_PATH, fname))
-        st.write("Model files downloaded!")
-
-    # Load the model and tokenizer
-    tokenizer = AutoTokenizer.from_pretrained(MODEL_PATH)
-    model = AutoModelForCausalLM.from_pretrained(MODEL_PATH)
-    
-    return model, tokenizer
 
 def main():
-    st.title("Contract Law AI Assistant")
-    st.write("Ask any question about contract law:")
+    st.set_page_config(page_title="Law AI Assistant", page_icon=":guardsman:", layout="wide")
+    st.title("Sheikh-GPT")
+    st.subheader(" By: Omar Abdelsalam")
+
+    # Set up the layout
+    col1, col2 = st.columns([2, 1])
+    with col1:
+        st.image(background_image_path, width=500, use_column_width=False)
+
+        # Wrap the chat history label in a ScrollView widget
+        scroll_view = st.empty()
+        chat_history = scroll_view.markdown("", unsafe_allow_html=True)
+
+        user_input = st.text_input("Type your message", key="user_input")
+
+        if st.button("Send"):
+            send_message(user_input, chat_history)
+
+
+
+def send_message(user_input, chat_history):
+    message = user_input.strip()
+    if message:
+        chat_history.write(f"<p style='font-weight:bold'>User: {message}</p>", unsafe_allow_html=True)
+
+        response_text = get_chatbot_response(message)
+        response = f"<p style='color:blue;font-weight:bold'>Sheikh-GPT: {response_text}</p>"
+        chat_history.write(response, unsafe_allow_html=True)
+
+        # Clear the user input after sending the message
+        user_input = ""
+
+
+
+
+def get_chatbot_response(message):
+    openai_response = openai.ChatCompletion.create(
+            model="gpt-3.5-turbo",
+            messages=[
+                {"role": "system", "content": "You are a knowledgeable Law Teacher."},
+                {"role": "user", "content": message},
+            ],
+        )
     
-    # Load the model and tokenizer
-    model, tokenizer = load_model()
-
-    # Text input for the user's question
-    user_input = st.text_input("Your Question:")
-
-    if user_input:
-        with st.spinner('Generating response...'):
-            # Tokenize the user input and get model's answer
-            input_ids = tokenizer.encode(user_input, return_tensors="pt")
-            generated_ids = model.generate(input_ids, max_length=100, num_return_sequences=1)
-            answer = tokenizer.decode(generated_ids[0], skip_special_tokens=True)
     
-        # Display the model's answer
-        st.write("Answer:", answer)
+    
+    
 
-with patch("transformers.dynamic_module_utils.resolve_trust_remote_code", lambda *args, **kwargs: True):
-    if __name__ == "__main__":
-        main()
+    assistant_message = openai_response.choices[0]["message"]["content"]
+    return assistant_message.strip()
 
 
+if __name__ == "__main__":
+    main()
