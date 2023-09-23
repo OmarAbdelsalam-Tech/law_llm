@@ -2,17 +2,7 @@ import streamlit as st
 import os
 import requests
 from transformers import AutoModelForCausalLM, AutoTokenizer, AutoConfig
-from transformers import dynamic_module_utils
-
-import types
-
-def patched_resolve_trust_remote_code(*args, **kwargs):
-    return False
-
-dynamic_module_utils.resolve_trust_remote_code = types.MethodType(patched_resolve_trust_remote_code, dynamic_module_utils)
-
-
-
+from unittest.mock import patch
 
 # Download the file from Google Drive
 def download_file_from_google_drive(file_id, destination):
@@ -69,5 +59,6 @@ def main():
         # Display the model's answer
         st.write("Answer:", answer)
 
-if __name__ == "__main__":
-    main()
+with patch("transformers.dynamic_module_utils.resolve_trust_remote_code", lambda *args, **kwargs: False):
+    if __name__ == "__main__":
+        main()
