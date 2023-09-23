@@ -16,21 +16,27 @@ def download_file_from_google_drive(file_id, destination):
 # Adjusted the model path to the current directory
 MODEL_PATH = "/mount/src/law_llm"
 
-
 @st.cache(allow_output_mutation=True, suppress_st_warning=True)
 def load_model():
-    # Check if model files exist
-    if not os.path.exists(os.path.join(MODEL_PATH, "config.json")):
-        # Create directory if it doesn't exist
-        if not os.path.exists(MODEL_PATH):
-            os.makedirs(MODEL_PATH)
-        
+    # File IDs and their names
+    file_ids = {
+        "1vltJDB2dWuHz_oaNui-kqFzG14nRaNaL": "file1.ext",
+        "131QwCzR1siIQSV2ugF1n2g737FVUCKAr": "file2.ext",
+        "1VkfMF0XOEFNs9bmJaW7VT9pUlhwJjEUW": "file3.ext",
+        "1iaJ7bkD1ln3AB4OzYSrP1hLl7wE2FwET": "file4.ext",
+        "1wIltr1eGTQhmpNf9OU4lp-OCIqINbGFx": "file5.ext",
+        "1g_6W4K_llIXmty0mhQcLc7PoINgGlhau": "file6.ext",
+        "1qcqD5YRpTRt60iHaJCfSEqOR-xGdNEPu": "file7.ext",
+        "1Wdv0J1zAx20e2uzs6E3Ph9g8nA_Jf8Wk": "file8.ext"
+    }
+
+    # Check if all files exist
+    all_files_exist = all(os.path.exists(os.path.join(MODEL_PATH, fname)) for fname in file_ids.values())
+    if not all_files_exist:
         # Download each file
         st.write("Downloading model files...")
-        download_file_from_google_drive("1qcqD5YRpTRt60iHaJCfSEqOR-xGdNEPu", os.path.join(MODEL_PATH, "config.json"))
-        download_file_from_google_drive("1Wdv0J1zAx20e2uzs6E3Ph9g8nA_Jf8Wk", os.path.join(MODEL_PATH, "pytorch_model.bin"))
-        download_file_from_google_drive("1vltJDB2dWuHz_oaNui-kqFzG14nRaNaL", os.path.join(MODEL_PATH, "vocab.json"))
-        download_file_from_google_drive("1wIltr1eGTQhmpNf9OU4lp-OCIqINbGFx", os.path.join(MODEL_PATH, "merges.txt"))
+        for file_id, fname in file_ids.items():
+            download_file_from_google_drive(file_id, os.path.join(MODEL_PATH, fname))
         st.write("Model files downloaded!")
 
     # Load the model and tokenizer using AutoConfig
