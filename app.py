@@ -20,7 +20,7 @@ def extract_zip(zip_path, extract_to="."):
         zip_ref.extractall(extract_to)
 
 # Set up the model paths
-MODEL_PATH = "./lawllm"
+MODEL_PATH = "./"
 
 @st.cache(allow_output_mutation=True, suppress_st_warning=True)
 def load_model():
