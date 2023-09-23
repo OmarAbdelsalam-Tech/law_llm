@@ -1,6 +1,7 @@
 import streamlit as st
 import os
 import requests
+import zipfile
 from transformers import AutoModelForCausalLM, AutoTokenizer, AutoConfig
 from unittest.mock import patch
 
@@ -13,6 +14,11 @@ def download_file_from_google_drive(file_id, destination):
         for chunk in response.iter_content(chunk_size=32768):
             file.write(chunk)
 
+# Extract a ZIP file
+def extract_zip(zip_path, extract_to="."):
+    with zipfile.ZipFile(zip_path, 'r') as zip_ref:
+        zip_ref.extractall(extract_to)
+
 # Set up the model paths
 MODEL_PATH = "./lawllm"
 
@@ -24,14 +30,15 @@ def load_model():
         if not os.path.exists(MODEL_PATH):
             os.makedirs(MODEL_PATH)
         
-        # Download each file
+        # Download ZIP file
         st.write("Downloading model files...")
-        download_file_from_google_drive("1qcqD5YRpTRt60iHaJCfSEqOR-xGdNEPu", os.path.join(MODEL_PATH, "config.json"))
-        download_file_from_google_drive("1Wdv0J1zAx20e2uzs6E3Ph9g8nA_Jf8Wk", os.path.join(MODEL_PATH, "pytorch_model.bin"))
-        download_file_from_google_drive("1vltJDB2dWuHz_oaNui-kqFzG14nRaNaL", os.path.join(MODEL_PATH, "vocab.json"))
-        download_file_from_google_drive("1wIltr1eGTQhmpNf9OU4lp-OCIqINbGFx", os.path.join(MODEL_PATH, "merges.txt"))
-        # Add other files as needed
-        st.write("Model files downloaded!")
+        zip_path = os.path.join(MODEL_PATH, "model_files.zip")
+        download_file_from_google_drive("19INw23gJi5kTb9T5yOczIlzGID2Elrf9", zip_path)
+        
+        # Extract the ZIP file
+        extract_zip(zip_path, MODEL_PATH)
+        
+        st.write("Model files extracted!")
 
     # Load the model and tokenizer using AutoConfig
     config = AutoConfig.from_pretrained(MODEL_PATH)
