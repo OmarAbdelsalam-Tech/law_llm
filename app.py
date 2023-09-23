@@ -4,6 +4,14 @@ import requests
 from transformers import AutoModelForCausalLM, AutoTokenizer, AutoConfig
 from transformers import dynamic_module_utils
 
+import types
+
+def patched_resolve_trust_remote_code(*args, **kwargs):
+    return False
+
+dynamic_module_utils.resolve_trust_remote_code = types.MethodType(patched_resolve_trust_remote_code, dynamic_module_utils)
+
+
 
 
 # Download the file from Google Drive
