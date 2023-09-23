@@ -4,37 +4,25 @@ import requests
 from transformers import AutoModelForCausalLM, AutoTokenizer, AutoConfig
 from unittest.mock import patch
 
-cwd = os.getcwd()
-st.write(f"Current working directory: {cwd}")
 
 import streamlit as st
-import os
+import subprocess
 
-def list_all_dirs(base_path):
-    directories = []
-
-    for root, dirs, _ in os.walk(base_path):
-        for dir_name in dirs:
-            directories.append(os.path.join(root, dir_name))
-
-    return directories
+def get_pip_list():
+    # Run the pip list command and capture its output
+    result = subprocess.run(["pip", "list"], capture_output=True, text=True)
+    return result.stdout
 
 def main():
-    base_path = os.getcwd()
-    st.write(f"Starting from directory: {base_path}")
+    st.title("Pip List in Streamlit")
 
-    all_dirs = list_all_dirs(base_path)
-    
-    for dir_path in all_dirs:
-        st.write(dir_path)
+    # Call the function and display its output
+    pip_list_output = get_pip_list()
+    st.text_area("Pip List:", pip_list_output)
 
 if __name__ == "__main__":
     main()
 
-
-# List files in the current directory
-files_in_cwd = os.listdir(cwd)
-st.write(files_in_cwd)
 
 # Download the file from Google Drive
 def download_file_from_google_drive(file_id, destination):
