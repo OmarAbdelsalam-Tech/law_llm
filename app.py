@@ -4,6 +4,14 @@ import requests
 from transformers import AutoModelForCausalLM, AutoTokenizer, AutoConfig
 from unittest.mock import patch
 
+cwd = os.getcwd()
+st.write(f"Current working directory: {cwd}")
+
+# Also, list files in the current directory
+files_in_cwd = os.listdir(cwd)
+st.write(files_in_cwd)
+
+
 # Download the file from Google Drive
 def download_file_from_google_drive(file_id, destination):
     base_url = "https://drive.google.com/uc?export=download"
