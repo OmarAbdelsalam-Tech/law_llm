@@ -7,6 +7,31 @@ from unittest.mock import patch
 cwd = os.getcwd()
 st.write(f"Current working directory: {cwd}")
 
+import streamlit as st
+import os
+
+def list_all_dirs(base_path):
+    directories = []
+
+    for root, dirs, _ in os.walk(base_path):
+        for dir_name in dirs:
+            directories.append(os.path.join(root, dir_name))
+
+    return directories
+
+def main():
+    base_path = os.getcwd()
+    st.write(f"Starting from directory: {base_path}")
+
+    all_dirs = list_all_dirs(base_path)
+    
+    for dir_path in all_dirs:
+        st.write(dir_path)
+
+if __name__ == "__main__":
+    main()
+
+
 # List files in the current directory
 files_in_cwd = os.listdir(cwd)
 st.write(files_in_cwd)
