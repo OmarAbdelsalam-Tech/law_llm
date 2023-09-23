@@ -39,6 +39,11 @@ def load_model():
     model = AutoModelForCausalLM.from_pretrained(MODEL_PATH, config=config)
     
     return model, tokenizer
+import os
+
+current_directory = os.getcwd()
+st.write(f"The current directory is: {current_directory}")
+
 
 def main():
     st.title("Contract Law AI Assistant")
