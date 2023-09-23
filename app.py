@@ -30,6 +30,7 @@ def load_model():
         download_file_from_google_drive("1Wdv0J1zAx20e2uzs6E3Ph9g8nA_Jf8Wk", os.path.join(MODEL_PATH, "pytorch_model.bin"))
         download_file_from_google_drive("1vltJDB2dWuHz_oaNui-kqFzG14nRaNaL", os.path.join(MODEL_PATH, "vocab.json"))
         download_file_from_google_drive("1wIltr1eGTQhmpNf9OU4lp-OCIqINbGFx", os.path.join(MODEL_PATH, "merges.txt"))
+        # Add other files as needed
         st.write("Model files downloaded!")
 
     # Load the model and tokenizer using AutoConfig
