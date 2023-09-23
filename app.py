@@ -7,34 +7,35 @@ from transformers import AutoModelForCausalLM, AutoTokenizer
 if 'model_loaded' not in st.session_state:
     st.session_state.model_loaded = False
 
-# Download the model from Google Drive
-def download_model(file_id, dest_folder):
+# Download the file from Google Drive
+def download_file_from_google_drive(file_id, destination):
     base_url = "https://drive.google.com/uc?export=download"
     response = requests.get(f"{base_url}&id={file_id}", stream=True)
-    file_size = int(response.headers.get('content-length', 0))
-    progress = st.progress(0)
     
-    with open(os.path.join(dest_folder, "model.zip"), "wb") as file:
-        for data in response.iter_content(chunk_size=1024):
-            size = file.write(data)
-            progress.progress(size/file_size)
-
-    # Unzipping the model directory
-    os.system(f"unzip {dest_folder}/model.zip -d {dest_folder}")
-    st.write("Model loaded!")
+    with open(destination, "wb") as file:
+        for chunk in response.iter_content(chunk_size=32768):
+            file.write(chunk)
 
 # Set up the model paths
 MODEL_PATH = "./lawllm"
 DEST_FOLDER = "."
 
+if not os.path.exists(MODEL_PATH):
+    os.makedirs(MODEL_PATH)
+
 st.title("Contract Law AI Assistant")
 st.write("Ask any question about contract law:")
 
 if not st.session_state.model_loaded:
-    FILE_ID = "1lEcBI_3JntflkAeiMQAR0XOv6EQYpx6V"
-    download_model(FILE_ID, DEST_FOLDER)
+    # Download each file
+    st.write("Downloading model files...")
+    download_file_from_google_drive("1qcqD5YRpTRt60iHaJCfSEqOR-xGdNEPu", os.path.join(MODEL_PATH, "config.json"))
+    download_file_from_google_drive("1Wdv0J1zAx20e2uzs6E3Ph9g8nA_Jf8Wk", os.path.join(MODEL_PATH, "pytorch_model.bin"))
+    download_file_from_google_drive("1vltJDB2dWuHz_oaNui-kqFzG14nRaNaL", os.path.join(MODEL_PATH, "vocab.json"))
+    download_file_from_google_drive("1wIltr1eGTQhmpNf9OU4lp-OCIqINbGFx", os.path.join(MODEL_PATH, "merges.txt"))
+    st.write("Model files downloaded!")
 
-    # Load the model and tokenizer automatically
+    # Load the model and tokenizer
     tokenizer = AutoTokenizer.from_pretrained(MODEL_PATH)
     model = AutoModelForCausalLM.from_pretrained(MODEL_PATH)
     st.session_state.model_loaded = True
