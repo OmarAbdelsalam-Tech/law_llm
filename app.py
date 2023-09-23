@@ -40,9 +40,17 @@ def load_model():
     
     return model, tokenizer
 import os
+import streamlit as st
 
 current_directory = os.getcwd()
 st.write(f"The current directory is: {current_directory}")
+
+# List all files and directories in the current directory
+all_files_and_dirs = os.listdir(current_directory)
+st.write("Contents of the current directory:")
+for item in all_files_and_dirs:
+    st.write(item)
+
 
 
 def main():
