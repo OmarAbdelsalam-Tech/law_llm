@@ -44,5 +44,5 @@ if user_input:
 
 # Provide a button to download the model (you can place this anywhere in your app)
 if st.button("Download Model"):
-    FILE_ID = "1KBas6Rux5tTjxFI2ZuweXsVYphSneSdd"
+    FILE_ID = "1lEcBI_3JntflkAeiMQAR0XOv6EQYpx6V"
     download_model(FILE_ID, DEST_FOLDER)
