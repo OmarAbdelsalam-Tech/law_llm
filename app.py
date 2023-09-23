@@ -6,7 +6,7 @@ import platform
 
 from transformers import AutoModelForCausalLM, AutoTokenizer
 
-st.write("Python version:", platform.python_version())
+
 
 # Check if 'model_loaded' is in the session state
 if 'model_loaded' not in st.session_state:
