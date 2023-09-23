@@ -21,7 +21,7 @@ def download_model(file_id, dest_folder):
 
     # Unzipping the model directory
     os.system(f"unzip {dest_folder}/model.zip -d {dest_folder}")
-    st.write("Model downloaded and extracted!")
+    st.write("Model loaded!")
 
 # Set up the model paths
 MODEL_PATH = "./lawllm"
@@ -31,16 +31,13 @@ st.title("Contract Law AI Assistant")
 st.write("Ask any question about contract law:")
 
 if not st.session_state.model_loaded:
-    # Provide a button to download the model (you can place this anywhere in your app)
-    if st.button("Download Model"):
-        FILE_ID = "1lEcBI_3JntflkAeiMQAR0XOv6EQYpx6V"
-        download_model(FILE_ID, DEST_FOLDER)
+    FILE_ID = "1lEcBI_3JntflkAeiMQAR0XOv6EQYpx6V"
+    download_model(FILE_ID, DEST_FOLDER)
 
-        # Load the model and tokenizer ONLY after downloading
-        tokenizer = AutoTokenizer.from_pretrained(MODEL_PATH)
-        model = AutoModelForCausalLM.from_pretrained(MODEL_PATH)
-        st.session_state.model_loaded = True
-        st.write("Model loaded successfully!")
+    # Load the model and tokenizer automatically
+    tokenizer = AutoTokenizer.from_pretrained(MODEL_PATH)
+    model = AutoModelForCausalLM.from_pretrained(MODEL_PATH)
+    st.session_state.model_loaded = True
 else:
     tokenizer = AutoTokenizer.from_pretrained(MODEL_PATH)
     model = AutoModelForCausalLM.from_pretrained(MODEL_PATH)
