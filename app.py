@@ -22,7 +22,7 @@ def download_file_from_google_drive(file_id, destination):
 # Adjusted the model path to the current directory
 MODEL_PATH = "./"
 
-@st.cache(allow_output_mutation=True, suppress_st_warning=True)
+allow_output_mutation=True, suppress_st_warning=True
 def load_model():
     # File IDs and their names
     file_ids = {
@@ -71,24 +71,8 @@ def main():
         # Display the model's answer
         st.write("Answer:", answer)
 
-with patch("transformers.dynamic_module_utils.resolve_trust_remote_code", lambda *args, **kwargs: False):
+with patch("transformers.dynamic_module_utils.resolve_trust_remote_code", lambda *args, **kwargs: True):
     if __name__ == "__main__":
         main()
 
-import streamlit as st
-import subprocess
 
-def get_pip_list():
-    # Run the pip list command and capture its output
-    result = subprocess.run(["pip", "list"], capture_output=True, text=True)
-    return result.stdout
-
-def main():
-    st.title("Pip List in Streamlit")
-
-    # Call the function and display its output
-    pip_list_output = get_pip_list()
-    st.text_area("Pip List:", pip_list_output)
-
-if __name__ == "__main__":
-    main()
