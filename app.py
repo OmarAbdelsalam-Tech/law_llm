@@ -1,12 +1,8 @@
 import streamlit as st
 import os
 import requests
-
-import platform
-
-from transformers import AutoModelForCausalLM, AutoTokenizer
-
-
+import json
+from transformers import MixFormerForCausalLM, MixFormerTokenizer
 
 # Check if 'model_loaded' is in the session state
 if 'model_loaded' not in st.session_state:
@@ -40,13 +36,22 @@ if not st.session_state.model_loaded:
     download_file_from_google_drive("1wIltr1eGTQhmpNf9OU4lp-OCIqINbGFx", os.path.join(MODEL_PATH, "merges.txt"))
     st.write("Model files downloaded!")
 
-    # Load the model and tokenizer
-    tokenizer = AutoTokenizer.from_pretrained(MODEL_PATH)
-    model = AutoModelForCausalLM.from_pretrained(MODEL_PATH)
+    # Load the configuration manually
+    with open(os.path.join(MODEL_PATH, 'config.json'), 'r') as f:
+        config = json.load(f)
+
+    # Load tokenizer and model using the manually loaded configuration
+    tokenizer = MixFormerTokenizer(vocab_file=os.path.join(MODEL_PATH, 'vocab.json'), merges_file=os.path.join(MODEL_PATH, 'merges.txt'))
+    model = MixFormerForCausalLM.from_config(config)
     st.session_state.model_loaded = True
 else:
-    tokenizer = AutoTokenizer.from_pretrained(MODEL_PATH)
-    model = AutoModelForCausalLM.from_pretrained(MODEL_PATH)
+    # Load the configuration manually
+    with open(os.path.join(MODEL_PATH, 'config.json'), 'r') as f:
+        config = json.load(f)
+
+    # Load tokenizer and model using the manually loaded configuration
+    tokenizer = MixFormerTokenizer(vocab_file=os.path.join(MODEL_PATH, 'vocab.json'), merges_file=os.path.join(MODEL_PATH, 'merges.txt'))
+    model = MixFormerForCausalLM.from_config(config)
 
 # Text input for the user's question
 user_input = st.text_input("Your Question:")
@@ -60,5 +65,3 @@ if user_input and st.session_state.model_loaded:
     
     # Display the model's answer
     st.write("Answer:", answer)
-
-
