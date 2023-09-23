@@ -13,7 +13,7 @@ def download_file_from_google_drive(file_id, destination):
         for chunk in response.iter_content(chunk_size=32768):
             file.write(chunk)
 
-# Set up the model paths
+# Adjusted the model path to the current directory
 MODEL_PATH = "./"
 
 @st.cache(allow_output_mutation=True, suppress_st_warning=True)
@@ -30,7 +30,6 @@ def load_model():
         download_file_from_google_drive("1Wdv0J1zAx20e2uzs6E3Ph9g8nA_Jf8Wk", os.path.join(MODEL_PATH, "pytorch_model.bin"))
         download_file_from_google_drive("1vltJDB2dWuHz_oaNui-kqFzG14nRaNaL", os.path.join(MODEL_PATH, "vocab.json"))
         download_file_from_google_drive("1wIltr1eGTQhmpNf9OU4lp-OCIqINbGFx", os.path.join(MODEL_PATH, "merges.txt"))
-        # Add other files as needed
         st.write("Model files downloaded!")
 
     # Load the model and tokenizer using AutoConfig
@@ -39,19 +38,6 @@ def load_model():
     model = AutoModelForCausalLM.from_pretrained(MODEL_PATH, config=config)
     
     return model, tokenizer
-import os
-import streamlit as st
-
-current_directory = os.getcwd()
-st.write(f"The current directory is: {current_directory}")
-
-# List all files and directories in the current directory
-all_files_and_dirs = os.listdir(current_directory)
-st.write("Contents of the current directory:")
-for item in all_files_and_dirs:
-    st.write(item)
-
-
 
 def main():
     st.title("Contract Law AI Assistant")
