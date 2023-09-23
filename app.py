@@ -6,6 +6,8 @@ import platform
 
 from transformers import AutoModelForCausalLM, AutoTokenizer
 
+st.write("Python version:", platform.python_version())
+
 # Check if 'model_loaded' is in the session state
 if 'model_loaded' not in st.session_state:
     st.session_state.model_loaded = False
@@ -58,5 +60,5 @@ if user_input and st.session_state.model_loaded:
     
     # Display the model's answer
     st.write("Answer:", answer)
-st.write("Python version:", platform.python_version())
+
 
