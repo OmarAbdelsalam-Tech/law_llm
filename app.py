@@ -3,6 +3,15 @@ import os
 import requests
 from transformers import AutoModelForCausalLM, AutoTokenizer, AutoConfig
 
+from transformers import dynamic_module_utils
+
+# Override the function to always return False
+def patched_resolve_trust_remote_code(*args, **kwargs):
+    return False
+
+dynamic_module_utils.resolve_trust_remote_code = patched_resolve_trust_remote_code
+
+
 # Check if 'model_loaded' is in the session state
 if 'model_loaded' not in st.session_state:
     st.session_state.model_loaded = False
