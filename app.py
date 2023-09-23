@@ -23,17 +23,24 @@ def download_model(file_id, dest_folder):
 MODEL_PATH = "./lawllm"
 DEST_FOLDER = "."
 
-# Load the model and tokenizer
-tokenizer = AutoTokenizer.from_pretrained(MODEL_PATH)
-model = AutoModelForCausalLM.from_pretrained(MODEL_PATH)
-
 st.title("Contract Law AI Assistant")
 st.write("Ask any question about contract law:")
+
+# Provide a button to download the model (you can place this anywhere in your app)
+if st.button("Download Model"):
+    FILE_ID = "1lEcBI_3JntflkAeiMQAR0XOv6EQYpx6V"
+    download_model(FILE_ID, DEST_FOLDER)
+
+    # Load the model and tokenizer ONLY after downloading
+    tokenizer = AutoTokenizer.from_pretrained(MODEL_PATH)
+    model = AutoModelForCausalLM.from_pretrained(MODEL_PATH)
+
+    st.write("Model loaded successfully!")
 
 # Text input for the user's question
 user_input = st.text_input("Your Question:")
 
-if user_input:
+if user_input and 'tokenizer' in locals() and 'model' in locals():
     # Tokenize the user input and get model's answer
     input_ids = tokenizer.encode(user_input, return_tensors="pt")
     generated_ids = model.generate(input_ids, max_length=100, num_return_sequences=1)
@@ -41,8 +48,3 @@ if user_input:
     
     # Display the model's answer
     st.write("Answer:", answer)
-
-# Provide a button to download the model (you can place this anywhere in your app)
-if st.button("Download Model"):
-    FILE_ID = "1lEcBI_3JntflkAeiMQAR0XOv6EQYpx6V"
-    download_model(FILE_ID, DEST_FOLDER)
