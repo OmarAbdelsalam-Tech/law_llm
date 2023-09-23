@@ -7,10 +7,9 @@ from unittest.mock import patch
 cwd = os.getcwd()
 st.write(f"Current working directory: {cwd}")
 
-# Also, list files in the current directory
+# List files in the current directory
 files_in_cwd = os.listdir(cwd)
 st.write(files_in_cwd)
-
 
 # Download the file from Google Drive
 def download_file_from_google_drive(file_id, destination):
@@ -28,14 +27,14 @@ MODEL_PATH = "./"
 def load_model():
     # File IDs and their names
     file_ids = {
-        "1vltJDB2dWuHz_oaNui-kqFzG14nRaNaL": "file1.ext",
-        "131QwCzR1siIQSV2ugF1n2g737FVUCKAr": "file2.ext",
-        "1VkfMF0XOEFNs9bmJaW7VT9pUlhwJjEUW": "file3.ext",
-        "1iaJ7bkD1ln3AB4OzYSrP1hLl7wE2FwET": "file4.ext",
-        "1wIltr1eGTQhmpNf9OU4lp-OCIqINbGFx": "file5.ext",
-        "1g_6W4K_llIXmty0mhQcLc7PoINgGlhau": "file6.ext",
-        "1qcqD5YRpTRt60iHaJCfSEqOR-xGdNEPu": "file7.ext",
-        "1Wdv0J1zAx20e2uzs6E3Ph9g8nA_Jf8Wk": "file8.ext"
+        "1vltJDB2dWuHz_oaNui-kqFzG14nRaNaL": "vocab.json",
+        "131QwCzR1siIQSV2ugF1n2g737FVUCKAr": "tokenizer.json",
+        "1VkfMF0XOEFNs9bmJaW7VT9pUlhwJjEUW": "tokenizer_config.json",
+        "1iaJ7bkD1ln3AB4OzYSrP1hLl7wE2FwET": "special_tokens_map.json",
+        "1Wdv0J1zAx20e2uzs6E3Ph9g8nA_Jf8Wk": "pytorch_model.bin",
+        "1wIltr1eGTQhmpNf9OU4lp-OCIqINbGFx": "merges.txt",
+        "1g_6W4K_llIXmty0mhQcLc7PoINgGlhau": "generation_config.json",
+        "1qcqD5YRpTRt60iHaJCfSEqOR-xGdNEPu": "config.json"
     }
 
     # Check if all files exist
@@ -47,10 +46,9 @@ def load_model():
             download_file_from_google_drive(file_id, os.path.join(MODEL_PATH, fname))
         st.write("Model files downloaded!")
 
-    # Load the model and tokenizer using AutoConfig
-    config = AutoConfig.from_pretrained(MODEL_PATH)
-    tokenizer = AutoTokenizer.from_pretrained(MODEL_PATH, config=config)
-    model = AutoModelForCausalLM.from_pretrained(MODEL_PATH, config=config)
+    # Load the model and tokenizer
+    tokenizer = AutoTokenizer.from_pretrained(MODEL_PATH)
+    model = AutoModelForCausalLM.from_pretrained(MODEL_PATH)
     
     return model, tokenizer
 
