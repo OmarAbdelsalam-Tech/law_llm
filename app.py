@@ -1,7 +1,14 @@
 import streamlit as st
 import os
 import requests
-from transformers import AutoModelForCausalLM, AutoTokenizer
+from transformers import AutoModelForCausalLM, AutoTokenizer, AutoConfig
+from transformers import dynamic_module_utils
+
+# Patch the function to always return False
+def patched_resolve_trust_remote_code(*args, **kwargs):
+    return False
+
+dynamic_module_utils.resolve_trust_remote_code = patched_resolve_trust_remote_code
 
 # Download the file from Google Drive
 def download_file_from_google_drive(file_id, destination):
@@ -31,9 +38,10 @@ def load_model():
         download_file_from_google_drive("1wIltr1eGTQhmpNf9OU4lp-OCIqINbGFx", os.path.join(MODEL_PATH, "merges.txt"))
         st.write("Model files downloaded!")
 
-    # Load the model and tokenizer
-    tokenizer = AutoTokenizer.from_pretrained(MODEL_PATH)
-    model = AutoModelForCausalLM.from_pretrained(MODEL_PATH)
+    # Load the model and tokenizer using AutoConfig
+    config = AutoConfig.from_pretrained(MODEL_PATH)
+    tokenizer = AutoTokenizer.from_pretrained(MODEL_PATH, config=config)
+    model = AutoModelForCausalLM.from_pretrained(MODEL_PATH, config=config)
     
     return model, tokenizer
 
