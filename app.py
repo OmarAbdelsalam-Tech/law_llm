@@ -3,6 +3,10 @@ import os
 import requests
 from transformers import AutoModelForCausalLM, AutoTokenizer
 
+# Check if 'model_loaded' is in the session state
+if 'model_loaded' not in st.session_state:
+    st.session_state.model_loaded = False
+
 # Download the model from Google Drive
 def download_model(file_id, dest_folder):
     base_url = "https://drive.google.com/uc?export=download"
@@ -26,25 +30,30 @@ DEST_FOLDER = "."
 st.title("Contract Law AI Assistant")
 st.write("Ask any question about contract law:")
 
-# Provide a button to download the model (you can place this anywhere in your app)
-if st.button("Download Model"):
-    FILE_ID = "1lEcBI_3JntflkAeiMQAR0XOv6EQYpx6V"
-    download_model(FILE_ID, DEST_FOLDER)
+if not st.session_state.model_loaded:
+    # Provide a button to download the model (you can place this anywhere in your app)
+    if st.button("Download Model"):
+        FILE_ID = "1lEcBI_3JntflkAeiMQAR0XOv6EQYpx6V"
+        download_model(FILE_ID, DEST_FOLDER)
 
-    # Load the model and tokenizer ONLY after downloading
+        # Load the model and tokenizer ONLY after downloading
+        tokenizer = AutoTokenizer.from_pretrained(MODEL_PATH)
+        model = AutoModelForCausalLM.from_pretrained(MODEL_PATH)
+        st.session_state.model_loaded = True
+        st.write("Model loaded successfully!")
+else:
     tokenizer = AutoTokenizer.from_pretrained(MODEL_PATH)
     model = AutoModelForCausalLM.from_pretrained(MODEL_PATH)
-
-    st.write("Model loaded successfully!")
 
 # Text input for the user's question
 user_input = st.text_input("Your Question:")
 
-if user_input and 'tokenizer' in locals() and 'model' in locals():
-    # Tokenize the user input and get model's answer
-    input_ids = tokenizer.encode(user_input, return_tensors="pt")
-    generated_ids = model.generate(input_ids, max_length=100, num_return_sequences=1)
-    answer = tokenizer.decode(generated_ids[0], skip_special_tokens=True)
+if user_input and st.session_state.model_loaded:
+    with st.spinner('Generating response...'):
+        # Tokenize the user input and get model's answer
+        input_ids = tokenizer.encode(user_input, return_tensors="pt")
+        generated_ids = model.generate(input_ids, max_length=100, num_return_sequences=1)
+        answer = tokenizer.decode(generated_ids[0], skip_special_tokens=True)
     
     # Display the model's answer
     st.write("Answer:", answer)
